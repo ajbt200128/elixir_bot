@@ -7,7 +7,7 @@ defmodule AiNumWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_ai_num_key",
-    signing_salt: "DV4/kV5w"
+    signing_salt: "hTlT4Rxb"
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
@@ -26,6 +26,7 @@ defmodule AiNumWeb.Endpoint do
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
     plug Phoenix.CodeReloader
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :ai_num
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,

@@ -1,5 +1,15 @@
 import Config
 
+# Configure your database
+config :ai_num, AiNum.Repo,
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  database: "ai_num_dev",
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -13,7 +23,7 @@ config :ai_num, AiNumWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "d92lC2xkPrQ/rx034Pwu1740Xov48rFJ3prJ7fKjRprQ+yAcsqoxxz64dK2wzS8h",
+  secret_key_base: "Ratpn6+owqom/nqxslO1hAj4enj08xdEC8acbRBRMozAOZjH2Bt4gXmbr90pwc6c",
   live_reload: [
     patterns: ["lib/**/*.{ex,exs}"]
   ],
