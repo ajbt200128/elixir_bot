@@ -7,6 +7,8 @@ defmodule AiNum.Application do
 
   @impl true
   def start(_type, _args) do
+
+    AiNum.Release.migrate()
     children = [
       # Start the Ecto repository
       AiNum.Repo,

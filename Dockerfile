@@ -19,7 +19,10 @@ ARG DEBIAN_VERSION=bullseye-20221004-slim
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
+FROM flyio/litefs:0.2 AS litefs
+
 FROM ${BUILDER_IMAGE} as builder
+
 
 # install build dependencies
 RUN apt-get update -y && apt-get install -y build-essential git \
@@ -50,6 +53,7 @@ COPY priv priv
 
 COPY lib lib
 
+
 # Compile the release
 RUN mix compile
 
@@ -63,7 +67,7 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
-RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
+RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales ca-certificates fuse sqlite3 curl bash \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
@@ -82,9 +86,14 @@ ENV MIX_ENV="prod"
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/ai_num ./
 
-USER nobody
+COPY --from=litefs /usr/local/bin/litefs /usr/local/bin/litefs
 
-CMD ["/app/bin/server"]
+# LiteFS Config file
+COPY litefs.yml /etc/litefs.yml
+
+RUN mkdir -p /data /mnt/data
+
+CMD ["litefs"]
 # Appended by flyctl
 ENV ECTO_IPV6 true
 ENV ERL_AFLAGS "-proto_dist inet6_tcp"

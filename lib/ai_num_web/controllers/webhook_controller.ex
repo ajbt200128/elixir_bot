@@ -2,23 +2,23 @@ defmodule AiNumWeb.WebhookController do
   use AiNumWeb, :controller
   require Logger
 
-  # idea:
-  # @signup # -> signup other person
-  # Ask for persons name and ask gpt to respond with that
-  # @send send other person a text
-  # Save responses, ask gpt to generate occaasional texts about them
-  # @image -> send image
-  # take calls and use transcript software, feed to gpt
+  # Maybe take confessions over phone call
+  # /confessions command displays a random confession transcribed
   def webhook(conn, params) do
     Logger.info("webhook params: #{inspect(params)}")
     body = params["Body"]
+    number = params["From"]
+    user = AiNum.User.create_or_find(number)
+    AiNum.User.text_count_inc(user)
+
+    Logger.debug("User: #{inspect(user)}")
     body = body |> String.trim()
 
     response =
       if String.at(body, 0) == AiNum.Commands.get_leader() do
-        AiNum.Commands.handle_command(body)
+        AiNum.Commands.handle_command(body, user)
       else
-        AiNum.Chat.handle_chat(body)
+        AiNum.Chat.handle_chat(body, user)
       end
 
     response = AiNum.Util.format_twiml(response)

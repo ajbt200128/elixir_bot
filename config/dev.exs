@@ -2,10 +2,7 @@ import Config
 
 # Configure your database
 config :ai_num, AiNum.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "ai_num_dev",
+  database: "./ai_num_dev.sqlite",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
